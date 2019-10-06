@@ -1,0 +1,962 @@
+openapi: 3.0.1
+info:
+  title: Simple API - Products
+  description: Get information about products.
+  version: 1.0.0
+servers:
+- url: https://simple.ripley.cl/api/v2
+  description: Local server for development
+- url: https://simple.ripley.cl/api/v2
+  description: Production server
+tags:
+- name: products
+  description: Get product details
+paths:
+  /products:
+    get:
+      tags:
+      - products
+      summary: Get a list of products by part numbers
+      operationId: getProductsByPartNumbers
+      parameters:
+      - name: partNumbers
+        in: query
+        description: The part numbers of the products to get, separated by comma.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: format
+        in: query
+        description: The format of the response.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: json
+          enum:
+          - json
+          - html
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+                x-content-type: application/json
+              example:
+              - $ref: '#/components/examples/Product'
+        500:
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse2'
+              example:
+                $ref: '#/components/examples/Error500'
+        501:
+          description: The requested format is not implemented.
+      x-swagger-router-controller: Products
+  /products/{partNumber}:
+    get:
+      tags:
+      - products
+      summary: Get a product by part number
+      operationId: getProductByPartNumber
+      parameters:
+      - name: partNumber
+        in: path
+        description: The part number of the product to get.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+              example:
+                $ref: '#/components/examples/Product'
+        400:
+          description: The specified part number is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                $ref: '#/components/examples/Error400'
+        404:
+          description: A product with the specified part number was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                $ref: '#/components/examples/Error404'
+      x-swagger-router-controller: Products
+  /products/by-id/{productId}:
+    get:
+      tags:
+      - products
+      summary: Get a product by ID
+      operationId: getProductById
+      parameters:
+      - name: productId
+        in: path
+        description: The ID of the product to get.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+              example:
+                $ref: '#/components/examples/Product'
+        400:
+          description: The part number of the product is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                $ref: '#/components/examples/Error400'
+        404:
+          description: A product with the specified ID was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                $ref: '#/components/examples/Error404'
+      x-swagger-router-controller: Products
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorResponse_error'
+    ErrorResponse2:
+      type: object
+      properties:
+        error:
+          type: boolean
+        message:
+          type: string
+    OutOfStockList:
+      type: object
+      properties:
+        xCatEntryQuantity:
+          type: boolean
+        blacklist:
+          type: boolean
+      example:
+        xCatEntryQuantity: true
+        blacklist: true
+    UnavailableList:
+      type: object
+      properties:
+        blacklist:
+          type: boolean
+      example:
+        blacklist: true
+    Promotion:
+      type: object
+      properties:
+        stock:
+          type: boolean
+        badge:
+          type: boolean
+      example:
+        badge: true
+        stock: true
+    Locals:
+      type: object
+      properties:
+        outOfStockList:
+          $ref: '#/components/schemas/OutOfStockList'
+        unavailableList:
+          $ref: '#/components/schemas/UnavailableList'
+        promotion:
+          $ref: '#/components/schemas/Promotion'
+      example:
+        outOfStockList:
+          xCatEntryQuantity: true
+          blacklist: true
+        unavailableList:
+          blacklist: true
+        promotion:
+          badge: true
+          stock: true
+    Cache:
+      type: object
+      properties:
+        cached:
+          type: boolean
+        created:
+          type: integer
+      example:
+        created: 7
+        cached: true
+    Prices:
+      type: object
+      properties:
+        offerPrice:
+          type: integer
+        listPrice:
+          type: integer
+        cardPrice:
+          type: integer
+        discount:
+          type: integer
+        discountPercentage:
+          type: integer
+        ripleyPuntos:
+          type: integer
+        $$cache:
+          $ref: '#/components/schemas/Cache'
+        formattedOfferPrice:
+          type: string
+        formattedListPrice:
+          type: string
+        formattedCardPrice:
+          type: string
+        formattedDiscount:
+          type: string
+      example:
+        discountPercentage: 5
+        formattedCardPrice: formattedCardPrice
+        formattedDiscount: formattedDiscount
+        offerPrice: 0
+        cardPrice: 1
+        discount: 5
+        formattedOfferPrice: formattedOfferPrice
+        ripleyPuntos: 2
+        $$cache:
+          created: 7
+          cached: true
+        formattedListPrice: formattedListPrice
+        listPrice: 6
+    ExtendedValue:
+      type: object
+      properties:
+        value:
+          type: string
+        key:
+          type: string
+      example:
+        value: value
+        key: key
+    Value:
+      type: object
+      properties:
+        values:
+          type: string
+        extendedValue:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExtendedValue'
+        identifier:
+          type: string
+        uniqueID:
+          type: string
+        slug:
+          type: string
+      example:
+        identifier: identifier
+        values: values
+        extendedValue:
+        - value: value
+          key: key
+        - value: value
+          key: key
+        uniqueID: uniqueID
+        slug: slug
+    DefiningAttribute:
+      type: object
+      properties:
+        displayable:
+          type: boolean
+        id:
+          type: string
+        identifier:
+          type: string
+        name:
+          type: string
+        usage:
+          type: string
+        values:
+          type: array
+          items:
+            $ref: '#/components/schemas/Value'
+      example:
+        identifier: identifier
+        usage: usage
+        values:
+        - identifier: identifier
+          values: values
+          extendedValue:
+          - value: value
+            key: key
+          - value: value
+            key: key
+          uniqueID: uniqueID
+          slug: slug
+        - identifier: identifier
+          values: values
+          extendedValue:
+          - value: value
+            key: key
+          - value: value
+            key: key
+          uniqueID: uniqueID
+          slug: slug
+        displayable: true
+        name: name
+        id: id
+    Attribute:
+      type: object
+      properties:
+        displayable:
+          type: boolean
+        id:
+          type: string
+        identifier:
+          type: string
+        name:
+          type: string
+        usage:
+          type: string
+        value:
+          type: string
+      example:
+        identifier: identifier
+        usage: usage
+        displayable: true
+        name: name
+        id: id
+        value: value
+    SkuValue:
+      type: object
+      properties:
+        values:
+          type: string
+        identifier:
+          type: string
+        uniqueID:
+          type: string
+      example:
+        identifier: identifier
+        values: values
+        uniqueID: uniqueID
+    SkuAttribute:
+      type: object
+      properties:
+        usage:
+          type: string
+        Values:
+          type: array
+          items:
+            $ref: '#/components/schemas/SkuValue'
+        searchable:
+          type: string
+        identifier:
+          type: string
+        comparable:
+          type: string
+        name:
+          type: string
+        uniqueID:
+          type: string
+        displayable:
+          type: string
+      example:
+        identifier: identifier
+        usage: usage
+        Values:
+        - identifier: identifier
+          values: values
+          uniqueID: uniqueID
+        - identifier: identifier
+          values: values
+          uniqueID: uniqueID
+        name: name
+        displayable: displayable
+        comparable: comparable
+        searchable: searchable
+        uniqueID: uniqueID
+    SkuPrice:
+      type: object
+      properties:
+        SKUPriceDescription:
+          type: string
+        SKUPriceValue:
+          type: string
+        SKUPriceUsage:
+          type: string
+      example:
+        SKUPriceUsage: SKUPriceUsage
+        SKUPriceDescription: SKUPriceDescription
+        SKUPriceValue: SKUPriceValue
+    Shipping:
+      type: object
+      properties:
+        rTienda:
+          type: boolean
+        dDomicilio:
+          type: boolean
+        rCercano:
+          type: boolean
+        cashOnDelivery:
+          type: boolean
+      example:
+        cashOnDelivery: true
+        rCercano: true
+        rTienda: true
+        dDomicilio: true
+    Color:
+      type: object
+      properties:
+        hex:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        uniqueID:
+          type: string
+      example:
+        name: name
+        hex: hex
+        slug: slug
+        uniqueID: uniqueID
+    SKU:
+      type: object
+      properties:
+        Attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/SkuAttribute'
+        Price:
+          type: array
+          items:
+            $ref: '#/components/schemas/SkuPrice'
+        SKUUniqueID:
+          type: string
+        partNumber:
+          type: string
+        ineligible:
+          type: boolean
+      example:
+        ineligible: true
+        Price:
+        - SKUPriceUsage: SKUPriceUsage
+          SKUPriceDescription: SKUPriceDescription
+          SKUPriceValue: SKUPriceValue
+        - SKUPriceUsage: SKUPriceUsage
+          SKUPriceDescription: SKUPriceDescription
+          SKUPriceValue: SKUPriceValue
+        Attributes:
+        - identifier: identifier
+          usage: usage
+          Values:
+          - identifier: identifier
+            values: values
+            uniqueID: uniqueID
+          - identifier: identifier
+            values: values
+            uniqueID: uniqueID
+          name: name
+          displayable: displayable
+          comparable: comparable
+          searchable: searchable
+          uniqueID: uniqueID
+        - identifier: identifier
+          usage: usage
+          Values:
+          - identifier: identifier
+            values: values
+            uniqueID: uniqueID
+          - identifier: identifier
+            values: values
+            uniqueID: uniqueID
+          name: name
+          displayable: displayable
+          comparable: comparable
+          searchable: searchable
+          uniqueID: uniqueID
+        SKUUniqueID: SKUUniqueID
+        partNumber: partNumber
+    Marketplace:
+      type: object
+      properties:
+        shopName:
+          type: string
+        shopId:
+          type: integer
+      example:
+        shopName: shopName
+        shopId: 9
+    WarrantyPrice:
+      type: object
+      properties:
+        priceValue:
+          type: integer
+        priceUsage:
+          type: string
+        formattedPriceValue:
+          type: string
+      example:
+        formattedPriceValue: formattedPriceValue
+        priceUsage: priceUsage
+        priceValue: 3
+    Warranty:
+      type: object
+      properties:
+        shortDescription:
+          type: string
+        Price:
+          type: array
+          items:
+            $ref: '#/components/schemas/WarrantyPrice'
+        type:
+          type: string
+        name:
+          type: string
+        quantity:
+          type: string
+        partNumber:
+          type: string
+        thumbnail:
+          type: string
+        uniqueID:
+          type: string
+      example:
+        thumbnail: thumbnail
+        quantity: quantity
+        Price:
+        - formattedPriceValue: formattedPriceValue
+          priceUsage: priceUsage
+          priceValue: 3
+        - formattedPriceValue: formattedPriceValue
+          priceUsage: priceUsage
+          priceValue: 3
+        name: name
+        partNumber: partNumber
+        shortDescription: shortDescription
+        type: type
+        uniqueID: uniqueID
+    Variations:
+      type: object
+      additionalProperties:
+        type: object
+        properties:
+          images:
+            type: array
+            items:
+              type: string
+          fullImage:
+            type: string
+          thumbnail:
+            type: string
+          partNumber:
+            type: string
+          uniqueID:
+            type: string
+        example:
+          images:
+          - images
+          - images
+          thumbnail: thumbnail
+          partNumber: partNumber
+          fullImage: fullImage
+          uniqueID: uniqueID
+    Lists:
+      type: object
+      properties:
+        outOfStockList:
+          $ref: '#/components/schemas/Lists_outOfStockList'
+        unavailableList:
+          $ref: '#/components/schemas/Lists_outOfStockList'
+        promotion:
+          $ref: '#/components/schemas/Lists_promotion'
+      example:
+        outOfStockList:
+          blacklist: true
+        promotion:
+          badge: true
+          stock: true
+    Simple:
+      type: object
+      properties:
+        lists:
+          $ref: '#/components/schemas/Lists'
+        isUnavailable:
+          type: boolean
+        isOutOfStock:
+          type: boolean
+        isMarketplaceProduct:
+          type: boolean
+      example:
+        isMarketplaceProduct: true
+        lists:
+          outOfStockList:
+            blacklist: true
+          promotion:
+            badge: true
+            stock: true
+        isUnavailable: true
+        isOutOfStock: true
+    Product:
+      type: object
+      properties:
+        uniqueID:
+          type: string
+        partNumber:
+          type: string
+        name:
+          type: string
+        locals:
+          $ref: '#/components/schemas/Locals'
+        fullImage:
+          type: string
+        images:
+          type: array
+          items:
+            type: string
+        prices:
+          $ref: '#/components/schemas/Prices'
+        shortDescription:
+          type: string
+        longDescription:
+          type: string
+        definingAttributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DefiningAttribute'
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attribute'
+        shipping:
+          $ref: '#/components/schemas/Shipping'
+        parentProductID:
+          type: string
+        xCatEntryCategory:
+          type: string
+        colors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Color'
+        productString:
+          type: string
+        SKUs:
+          type: array
+          items:
+            $ref: '#/components/schemas/SKU'
+        isMarketplaceProduct:
+          type: boolean
+        marketplace:
+          $ref: '#/components/schemas/Marketplace'
+        warranties:
+          type: array
+          items:
+            $ref: '#/components/schemas/Warranty'
+        url:
+          type: string
+        thumbnailImage:
+          type: string
+        simple:
+          $ref: '#/components/schemas/Simple'
+        single:
+          type: boolean
+        variations:
+          $ref: '#/components/schemas/Variations'
+      example:
+        longDescription: longDescription
+        parentProductID: parentProductID
+        simple:
+          isMarketplaceProduct: true
+          lists:
+            outOfStockList:
+              blacklist: true
+            promotion:
+              badge: true
+              stock: true
+          isUnavailable: true
+          isOutOfStock: true
+        colors:
+        - name: name
+          hex: hex
+          slug: slug
+          uniqueID: uniqueID
+        - name: name
+          hex: hex
+          slug: slug
+          uniqueID: uniqueID
+        productString: productString
+        xCatEntryCategory: xCatEntryCategory
+        shipping:
+          cashOnDelivery: true
+          rCercano: true
+          rTienda: true
+          dDomicilio: true
+        variations:
+          key:
+            images:
+            - images
+            - images
+            thumbnail: thumbnail
+            partNumber: partNumber
+            fullImage: fullImage
+            uniqueID: uniqueID
+        prices:
+          discountPercentage: 5
+          formattedCardPrice: formattedCardPrice
+          formattedDiscount: formattedDiscount
+          offerPrice: 0
+          cardPrice: 1
+          discount: 5
+          formattedOfferPrice: formattedOfferPrice
+          ripleyPuntos: 2
+          $$cache:
+            created: 7
+            cached: true
+          formattedListPrice: formattedListPrice
+          listPrice: 6
+        thumbnailImage: thumbnailImage
+        fullImage: fullImage
+        uniqueID: uniqueID
+        isMarketplaceProduct: true
+        images:
+        - images
+        - images
+        marketplace:
+          shopName: shopName
+          shopId: 9
+        shortDescription: shortDescription
+        url: url
+        definingAttributes:
+        - identifier: identifier
+          usage: usage
+          values:
+          - identifier: identifier
+            values: values
+            extendedValue:
+            - value: value
+              key: key
+            - value: value
+              key: key
+            uniqueID: uniqueID
+            slug: slug
+          - identifier: identifier
+            values: values
+            extendedValue:
+            - value: value
+              key: key
+            - value: value
+              key: key
+            uniqueID: uniqueID
+            slug: slug
+          displayable: true
+          name: name
+          id: id
+        - identifier: identifier
+          usage: usage
+          values:
+          - identifier: identifier
+            values: values
+            extendedValue:
+            - value: value
+              key: key
+            - value: value
+              key: key
+            uniqueID: uniqueID
+            slug: slug
+          - identifier: identifier
+            values: values
+            extendedValue:
+            - value: value
+              key: key
+            - value: value
+              key: key
+            uniqueID: uniqueID
+            slug: slug
+          displayable: true
+          name: name
+          id: id
+        SKUs:
+        - ineligible: true
+          Price:
+          - SKUPriceUsage: SKUPriceUsage
+            SKUPriceDescription: SKUPriceDescription
+            SKUPriceValue: SKUPriceValue
+          - SKUPriceUsage: SKUPriceUsage
+            SKUPriceDescription: SKUPriceDescription
+            SKUPriceValue: SKUPriceValue
+          Attributes:
+          - identifier: identifier
+            usage: usage
+            Values:
+            - identifier: identifier
+              values: values
+              uniqueID: uniqueID
+            - identifier: identifier
+              values: values
+              uniqueID: uniqueID
+            name: name
+            displayable: displayable
+            comparable: comparable
+            searchable: searchable
+            uniqueID: uniqueID
+          - identifier: identifier
+            usage: usage
+            Values:
+            - identifier: identifier
+              values: values
+              uniqueID: uniqueID
+            - identifier: identifier
+              values: values
+              uniqueID: uniqueID
+            name: name
+            displayable: displayable
+            comparable: comparable
+            searchable: searchable
+            uniqueID: uniqueID
+          SKUUniqueID: SKUUniqueID
+          partNumber: partNumber
+        - ineligible: true
+          Price:
+          - SKUPriceUsage: SKUPriceUsage
+            SKUPriceDescription: SKUPriceDescription
+            SKUPriceValue: SKUPriceValue
+          - SKUPriceUsage: SKUPriceUsage
+            SKUPriceDescription: SKUPriceDescription
+            SKUPriceValue: SKUPriceValue
+          Attributes:
+          - identifier: identifier
+            usage: usage
+            Values:
+            - identifier: identifier
+              values: values
+              uniqueID: uniqueID
+            - identifier: identifier
+              values: values
+              uniqueID: uniqueID
+            name: name
+            displayable: displayable
+            comparable: comparable
+            searchable: searchable
+            uniqueID: uniqueID
+          - identifier: identifier
+            usage: usage
+            Values:
+            - identifier: identifier
+              values: values
+              uniqueID: uniqueID
+            - identifier: identifier
+              values: values
+              uniqueID: uniqueID
+            name: name
+            displayable: displayable
+            comparable: comparable
+            searchable: searchable
+            uniqueID: uniqueID
+          SKUUniqueID: SKUUniqueID
+          partNumber: partNumber
+        single: true
+        warranties:
+        - thumbnail: thumbnail
+          quantity: quantity
+          Price:
+          - formattedPriceValue: formattedPriceValue
+            priceUsage: priceUsage
+            priceValue: 3
+          - formattedPriceValue: formattedPriceValue
+            priceUsage: priceUsage
+            priceValue: 3
+          name: name
+          partNumber: partNumber
+          shortDescription: shortDescription
+          type: type
+          uniqueID: uniqueID
+        - thumbnail: thumbnail
+          quantity: quantity
+          Price:
+          - formattedPriceValue: formattedPriceValue
+            priceUsage: priceUsage
+            priceValue: 3
+          - formattedPriceValue: formattedPriceValue
+            priceUsage: priceUsage
+            priceValue: 3
+          name: name
+          partNumber: partNumber
+          shortDescription: shortDescription
+          type: type
+          uniqueID: uniqueID
+        name: name
+        partNumber: partNumber
+        attributes:
+        - identifier: identifier
+          usage: usage
+          displayable: true
+          name: name
+          id: id
+          value: value
+        - identifier: identifier
+          usage: usage
+          displayable: true
+          name: name
+          id: id
+          value: value
+        locals:
+          outOfStockList:
+            xCatEntryQuantity: true
+            blacklist: true
+          unavailableList:
+            blacklist: true
+          promotion:
+            badge: true
+            stock: true
+    ErrorResponse_error:
+      type: object
+      properties:
+        message:
+          type: string
+    Lists_outOfStockList:
+      type: object
+      properties:
+        blacklist:
+          type: boolean
+      example:
+        blacklist: true
+    Lists_promotion:
+      type: object
+      properties:
+        stock:
+          type: boolean
+        badge:
+          type: boolean
+      example:
+        badge: true
+        stock: true
+  examples:
+    Product: {}
+    Error400: {}
+    Error404: {}
+    Error500: {}
