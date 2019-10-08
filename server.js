@@ -9,12 +9,13 @@ let  client = require('redis').createClient(process.env.REDIS_URL);
 let routes = require('./Routes/api')
 
 // Set Port
-const PORT = process.env.PORT || 4040;
+var PORT = process.env.PORT || 4040;
+// Init app
+let app = express()
+
 app.listen(PORT, () => {
     console.log(`Our app is running on port ${ PORT }`);
 });
-// Init app
-let app = express()
 
 // instantiate a connection to redis 
 client.on('connect', () => {
