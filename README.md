@@ -25,7 +25,13 @@ El API tiene como expectativa de entrada: </br>
 `url` of type string </br>
 `monto` of type string </br>
 
-
+## Heroku para test
+El path para probar: https://ripley-test-isaac.herokuapp.com/
+Asegurase que el metodo post este seteado con el formato `x-www-form-urlencoded`
+* Agregar producto (POST): `/producto/add`
+* Borrar producto (DELETE): `/producto/delete/{id}`
+* Buscar producto por id (GET): `/producto/{id}`
+* Traer todos los productos guardados (GET): `/users
 
 ## Usando Postman
 Asegurase que el metodo post este seteado con el formato `x-www-form-urlencoded`
