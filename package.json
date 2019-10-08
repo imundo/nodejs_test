@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ichtrojan/node-redis.git"
+    "url": "git+https://github.com/imundo/nodejs_test.git"
   },
-  "author": "Michael Okoh",
-  "license": "ISC",
+  "author": "Isaac Mundo",
+  "license": "IM",
   "bugs": {
-    "url": "https://github.com/ichtrojan/node-redis/issues"
+    "url": "https://github.com/imundo/nodejs_test"
   },
   "homepage": "https://github.com/ichtrojan/node-redis#readme",
   "dependencies": {
