@@ -1,6 +1,6 @@
 let  producto = require('redis').createClient(process.env.REDIS_URL);
 
-exports.get_all_users = (req, res, next) => {
+exports.get_all_product = (req, res, next) => {
   let return_dataset = []
 
   producto.keys('*', (err, id) => {
@@ -90,7 +90,7 @@ exports.get_product = (req, res, next) => {
       obj.id = id
 
       res.send({
-        'user': obj // if user is found return details
+        'product': obj // if user is found return details
       })
     }
   })

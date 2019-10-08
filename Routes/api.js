@@ -8,7 +8,7 @@ Route.get('/', (req, res, next) => {
 })
 
 // get all Producto
-Route.get('/productos', redis.get_all_users)
+Route.get('/productos', redis.get_all_product)
 
 // add a new Producto
 Route.post('/producto/add', redis.add_product)
