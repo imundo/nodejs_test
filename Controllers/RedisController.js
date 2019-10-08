@@ -38,6 +38,7 @@ exports.add_product = (req, res, next) => {
   let SKUs = req.body.SKUs
   let isMarketplaceProduct = req.body.isMarketplaceProduct
   let url = req.body.url
+  let monto = req.body.monto
 
 
   // make id the key and assign the id to the other Parameters
@@ -52,7 +53,9 @@ exports.add_product = (req, res, next) => {
     'colors', colors,
     'SKUs', SKUs,
     'isMarketplaceProduct', isMarketplaceProduct,
-    'url', url
+    'url', url,
+    'monto', monto
+
   ], (err, reply) => {
     if (err) {
       console.log(err)  // callback to log errors
