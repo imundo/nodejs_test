@@ -1,8 +1,5 @@
-// inside if statement
-var rtg   = require("url").parse(process.env.REDISTOGO_URL);
-var redis = require("redis").createClient(rtg.port, rtg.hostname);
-
-redis.auth(rtg.auth.split(":")[1]);
+let redis = require('redis')  // Require Redis
+let client = redis.createClient() // Create a new redis instance
 
 exports.get_all_users = (req, res, next) => {
   let return_dataset = []
