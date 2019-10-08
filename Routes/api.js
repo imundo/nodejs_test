@@ -8,15 +8,15 @@ Route.get('/', (req, res, next) => {
 })
 
 // get all Producto
-Route.get('/users', redis.get_all_users)
+Route.get('/productos', redis.get_all_users)
 
 // add a new Producto
-Route.post('/Producto/add', redis.add_product)
+Route.post('/producto/add', redis.add_product)
 
 // delete a user
-Route.delete('/Producto/delete/:id', redis.delete_product)
+Route.delete('/producto/delete/:id', redis.delete_product)
 
 // get a user by Producto
-Route.get('/Producto/:id', redis.get_product)
+Route.get('/producto/:id', redis.get_product)
 
 module.exports = Route

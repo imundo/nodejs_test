@@ -1,5 +1,4 @@
-let redis = require('redis')  // Require Redis
-let  client = require('redis').createClient(process.env.REDIS_URL);
+let  producto = require('redis').createClient(process.env.REDIS_URL);
 
 exports.get_all_users = (req, res, next) => {
   let return_dataset = []
