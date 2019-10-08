@@ -2,8 +2,12 @@ let express = require('express')
 let path = require('path')
 let bodyParser = require('body-parser')
 let methodOverride = require('method-override')
-let redis = require('redis')
-let client = redis.createClient()
+
+// inside if statement
+let rtg   = require("url").parse(process.env.REDISTOGO_URL);
+let redis = require("redis").createClient(rtg.port, rtg.hostname);
+
+redis.auth(rtg.auth.split(":")[1]);
 
 // define routes
 let routes = require('./Routes/api')
