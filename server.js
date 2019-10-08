@@ -8,7 +8,8 @@ let  client = require('redis').createClient(process.env.REDIS_URL);
 // define routes
 let routes = require('./Routes/api')
 
-
+// Set Port
+let PORT = 4040
 
 // Init app
 let app = express()
