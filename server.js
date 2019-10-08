@@ -9,7 +9,7 @@ let  client = require('redis').createClient(process.env.REDIS_URL);
 let routes = require('./Routes/api')
 
 // Set Port
-let PORT =  process.env.PORT;
+const PORT = process.env.PORT || 4040;
 // Init app
 let app = express()
 
