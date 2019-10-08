@@ -8,17 +8,18 @@ let  client = require('redis').createClient(process.env.REDIS_URL);
 // define routes
 let routes = require('./Routes/api')
 
-
+// Set Port
+var PORT = process.env.PORT || 4040;
 // Init app
 let app = express()
-app.set('port', (process.env.PORT || 4040));
+
 
 //For avoidong Heroku $PORT error
 app.get('/', function(request, response) {
     var result = 'App is running'
     response.send(result);
 }).listen(app.get('port'), function() {
-    console.log('App is running, server is listening on port ', app.get('port'));
+    console.log('App is running, server is listening on port ', app.get('PORT'));
 });
 // instantiate a connection to redis 
 client.on('connect', () => {
