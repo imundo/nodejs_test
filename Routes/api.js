@@ -7,19 +7,16 @@ Route.get('/', (req, res, next) => {
   res.send('Node-Redis CRUD Application | check Readme for instructions')
 })
 
-// get all users
+// get all Producto
 Route.get('/users', redis.get_all_users)
 
-// add a new user
-Route.post('/user/add', redis.add_user)
+// add a new Producto
+Route.post('/Producto/add', redis.add_product)
 
 // delete a user
-Route.delete('/user/delete/:id', redis.delete_user)
+Route.delete('/Producto/delete/:id', redis.delete_product)
 
-// get a user by id
-Route.get('/user/:id', redis.get_user)
-
-// update a user by id
-Route.put('/user/update/:id', redis.update_user)
+// get a user by Producto
+Route.get('/Producto/:id', redis.get_product)
 
 module.exports = Route

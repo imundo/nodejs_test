@@ -4,13 +4,13 @@ let  client = require('redis').createClient(process.env.REDIS_URL);
 exports.get_all_users = (req, res, next) => {
   let return_dataset = []
 
-  client.keys('*', (err, id) => {
-    let multi = client.multi()
+  producto.keys('*', (err, id) => {
+    let multi = producto.multi()
     let keys = Object.keys(id)
     let i = 0
 
     keys.forEach( (l) => {
-      client.hgetall(id[l], (e, o) => {
+      producto.hgetall(id[l], (e, o) => {
         i++
         if (e) {console.log(e)} else {
           temp_data = {'id':id[l],'data':o}
@@ -25,50 +25,65 @@ exports.get_all_users = (req, res, next) => {
   })
 }
 
-exports.add_user = (req, res, next) => {
+exports.add_product = (req, res, next) => {
   // post Parameters
   let id = req.body.id
-  let first_name = req.body.first_name
-  let last_name = req.body.last_name
-  let email = req.body.email
-  let phone = req.body.phone
+  let partNumber = req.body.partNumber
+  let name = req.body.name
+  let locals = req.body.locals
+  let fullImage = req.body.fullImage
+  let shortDescription = req.body.shortDescription
+  let parentProductID = req.body.parentProductID
+  let xCatEntryCategory = req.body.xCatEntryCategory
+  let colors = req.body.colors
+  let SKUs = req.body.SKUs
+  let isMarketplaceProduct = req.body.isMarketplaceProduct
+  let url = req.body.url
+
 
   // make id the key and assign the id to the other Parameters
-  client.hmset(id,[
-    'first_name', first_name,
-    'last_name', last_name,
-    'email', email,
-    'phone', phone
+  producto.hmset(id,[
+    'partNumber', partNumber,
+    'name', name,
+    'locals', locals,
+    'fullImage', fullImage,
+    'shortDescription', shortDescription,
+    'parentProductID', parentProductID,
+    'xCatEntryCategory', xCatEntryCategory,
+    'colors', colors,
+    'SKUs', SKUs,
+    'isMarketplaceProduct', isMarketplaceProduct,
+    'url', url
   ], (err, reply) => {
     if (err) {
       console.log(err)  // callback to log errors
     }
 
     console.log(reply)  // log success message
-    res.send('User added successfully') // response back to the client
+    res.send('Producto agregado exitosamente') // response back to the producto
   });
 }
 
-exports.delete_user = (req, res, next) => {
+exports.delete_product = (req, res, next) => {
   // find key associated with the id and deletes it
-  client.del(req.params.id, (err, reply) => {
+  producto.del(req.params.id, (err, reply) => {
     if (err) {
       console.log(err)  // callback incase something goes wrong
     }
 
     console.log(reply)  // log success message
-    res.send('User deleted successfully') // response back to the client
+    res.send('Producto deleted successfully') // response back to the producto
   })
 }
 
-exports.get_user = (req, res, next) => {
+exports.get_product = (req, res, next) => {
   // id from url Parameter
   let id = req.params.id
 
   // get all values associated with the key as id
-  client.hgetall(id, (err, obj) => {
+  producto.hgetall(id, (err, obj) => {
     if (!obj) {
-      res.send('User does not exist') // if no user is associated with that id/key return this
+      res.send('Producto does not exist') // if no user is associated with that id/key return this
     } else {
       obj.id = id
 
@@ -79,26 +94,4 @@ exports.get_user = (req, res, next) => {
   })
 }
 
-exports.update_user = (req, res, next) => {
-  // put Parameters
-  let id = req.params.id
-  let first_name = req.body.first_name
-  let last_name = req.body.last_name
-  let email = req.body.email
-  let phone = req.body.phone
 
-  // make id the key and assign the id to the other Parameters
-  client.hmset(id, [
-    'first_name', first_name,
-    'last_name', last_name,
-    'email', email,
-    'phone', phone
-  ], (err, reply) => {
-    if (err) {
-      console.log(err)  // callback to log errors
-    }
-
-    console.log(reply)  // log success message
-    res.send("User updated successfully") // response to client
-  })
-}
